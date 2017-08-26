@@ -10,7 +10,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <mode>dev</mode>
         <aws.sdk.version>1.11.180</aws.sdk.version>
-        <server.id>amsa.aws</server.id>
+        <server.id>my.aws</server.id>
         <!-- beanstalk application name, environment name prefix and stack name prefix -->
         <application.name>maven-repo</application.name>
         <region>ap-southeast-2</region>
