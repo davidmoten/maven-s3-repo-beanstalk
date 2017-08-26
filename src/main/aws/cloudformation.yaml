@@ -1,0 +1,251 @@
+##
+## AWS CloudFormation script for deploying a complete Beanstalk 
+## application environment. 
+## 
+## Prerequisites:
+##   - The Beanstalk Application should already be created in the AWS Console
+## 
+## To run:
+##
+##   ./deploy.sh <MODE>
+##
+## For example:
+##
+##   ./deploy.sh test
+##
+## will deploy the amsa-maven-test environment to the 
+## amsa-maven Beanstalk application.
+##
+
+AWSTemplateFormatVersion: '2010-09-09'
+
+Parameters:
+
+  mode: 
+    Default: dev
+    Description: modal environment to create
+    Type: String
+    MinLength: 1
+    MaxLength: 255
+    
+  version:
+    Default: 6.0-SNAPSHOT
+    Description: the Maven version of the artifact to be deployed
+    Type: String
+    
+  artifactName:
+    Default: maven-s3-repo
+    Type: String
+    
+  applicationName:
+    Default: maven-repo 
+    Type: String
+    
+  artifactBucket:
+    Default: elastic-beanstalk-artifacts 
+    Type: String
+    
+  mavenRepoBucket:
+    Default: maven-repo-dev
+    Type: String
+
+Resources:
+
+  ## incoming smtp messages are put in this bucket
+  ## and the s3 id put on the incoming queue
+  
+  ApplicationServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${applicationName}-service-role-${mode}"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement: 
+          - Effect: Allow
+            Principal: 
+              Service: elasticbeanstalk.amazonaws.com
+            Action: 
+              - "sts:AssumeRole"
+            Condition:
+              StringEquals:
+                "sts:ExternalId": elasticbeanstalk
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AWSElasticBeanstalkEnhancedHealth"
+        - "arn:aws:iam::aws:policy/service-role/AWSElasticBeanstalkService"
+              
+  ApplicationInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      InstanceProfileName: !Sub "${applicationName}-instance-profile-${mode}"
+      Roles:
+        - !Ref ApplicationInstanceRole
+        
+  ApplicationInstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${applicationName}-instance-role-${mode}"
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'  
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/AWSElasticBeanstalkWebTier'
+        - 'arn:aws:iam::aws:policy/AWSElasticBeanstalkMulticontainerDocker'
+        - 'arn:aws:iam::aws:policy/AWSElasticBeanstalkWorkerTier'                  
+      Policies:
+        ## this is where we add the permissions that the java webapp in 
+        ## beanstalk needs
+        - PolicyName: !Sub "${applicationName}-s3-read-write-policy-${mode}"
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+            - Effect: Allow
+              Action: s3:*
+              Resource: !Sub "arn:aws:s3:::${mavenRepoBucket}/*"
+        - PolicyName: !Sub "${applicationName}-s3-list-bucket-policy-${mode}"
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+            - Effect: Allow
+              Action: 's3:ListBucket'
+              Resource: !Sub "arn:aws:s3:::${mavenRepoBucket}"
+        - PolicyName: !Sub "${applicationName}-s3-keys-read-policy-${mode}"
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+            - Effect: Allow
+              Action: 
+              - s3:ListBucketVersions
+              - s3:ListBucket
+              - s3:GetObjectVersion
+              - s3:GetObject
+              Resource: 
+              - !Sub "arn:aws:s3:::${applicationName}-setup-${mode}/*"
+              - !Sub "arn:aws:s3:::${applicationName}-setup-${mode}"
+
+  ApplicationSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub "${applicationName}-security-group-${mode}"
+      GroupDescription: "Security group to allow SMTP port for AMSA integration testing and for Burum (Inmarsat.com)"
+      SecurityGroupIngress:
+        ## Java team Portal access in AWS for admin
+        - {CidrIp: "52.64.232.41/32", IpProtocol: "tcp", FromPort: "22", ToPort: "22"}
+        ## https access
+        - {CidrIp: "0.0.0.0/0", IpProtocol: "tcp", FromPort: "443", ToPort: "443"}
+  
+  EnvironmentApplicationVersion:
+    Type: AWS::ElasticBeanstalk::ApplicationVersion
+    Properties:
+      ApplicationName: !Sub "${applicationName}"
+      Description: !Sub "${applicationName}-${mode} application version"
+      SourceBundle:
+        S3Bucket: !Sub "${artifactBucket}"
+        S3Key: !Sub "${artifactName}-${version}.war"
+  
+  EnvironmentConfigurationTemplate:
+    Type: AWS::ElasticBeanstalk::ConfigurationTemplate
+    Properties:
+      ApplicationName: !Sub "${applicationName}"
+      Description: !Sub "${applicationName} Configuration Template"
+      OptionSettings:
+      - Namespace: aws:autoscaling:launchconfiguration
+        OptionName: InstanceType
+        Value: t2.nano
+        
+      ## single instance or load balanced
+      - Namespace: aws:elasticbeanstalk:environment
+        OptionName: EnvironmentType
+        Value: SingleInstance
+      
+      ## Instance profile
+      - Namespace: aws:autoscaling:launchconfiguration
+        OptionName: IamInstanceProfile
+        Value: !Ref ApplicationInstanceProfile
+        
+      ## Service role
+      - Namespace: aws:elasticbeanstalk:environment
+        OptionName: ServiceRole
+        Value: !Ref ApplicationServiceRole
+      
+      ## security group for port access
+      - Namespace: aws:autoscaling:launchconfiguration
+        OptionName: SecurityGroups
+        Value: !Ref ApplicationSecurityGroup
+      
+      ## allow ssh access for amsa
+      - Namespace: aws:autoscaling:launchconfiguration
+        OptionName: EC2KeyName
+        Value: amsa
+      
+      ## JVM options for tomcat
+      - Namespace: aws:elasticbeanstalk:container:tomcat:jvmoptions
+        OptionName: 'JVM Options'
+        Value: !Sub "-DmavenRepoBucket=${mavenRepoBucket}"
+      
+      ## Environment variables for machine
+      - Namespace: aws:elasticbeanstalk:application:environment
+        OptionName: MODE
+        Value: !Sub "${mode}"
+      
+      ## Email notifications
+      - Namespace: aws:elasticbeanstalk:sns:topics
+        OptionName: Notification Endpoint
+        Value: david.moten@amsa.gov.au
+        
+      - Namespace: aws:elasticbeanstalk:sns:topics
+        OptionName: Notification Protocol
+        Value: email  
+        
+      ## Enable managed updates
+      - Namespace: aws:elasticbeanstalk:managedactions
+        OptionName: ManagedActionsEnabled
+        Value: true
+      - Namespace: aws:elasticbeanstalk:managedactions
+        OptionName: PreferredStartTime
+        Value: "TUE:10:00"
+      - Namespace: aws:elasticbeanstalk:managedactions:platformupdate
+        OptionName: UpdateLevel
+        Value: patch
+      - Namespace: aws:elasticbeanstalk:managedactions:platformupdate
+        OptionName: InstanceRefreshEnabled
+        Value: true
+      ## required option for managed updates
+      - Namespace: aws:elasticbeanstalk:healthreporting:system
+        OptionName: SystemType
+        Value: enhanced
+      
+      ## Enable publishing logs to S3
+      - Namespace: aws:elasticbeanstalk:hostmanager
+        OptionName: LogPublicationControl
+        Value: true
+
+      ## This section to be enabled is using load-balanced cluster
+      - Namespace: aws:autoscaling:asg
+        OptionName: MinSize
+        Value: '2'
+      - Namespace: aws:autoscaling:asg
+        OptionName: MaxSize
+        Value: '4'
+#      - Namespace: aws:elasticbeanstalk:environment
+#        OptionName: EnvironmentType
+#        Value: LoadBalanced
+      
+      ## Base image is Amazon Linux with Java and Tomcat
+      SolutionStackName: "64bit Amazon Linux 2017.03 v2.6.3 running Tomcat 8 Java 8"
+  
+  ApplicationEnvironment:
+    Type: AWS::ElasticBeanstalk::Environment
+    Properties:
+      ApplicationName: !Sub "${applicationName}"
+      EnvironmentName: !Sub "${applicationName}-${mode}"
+      Description: !Sub "${applicationName} ${mode} environment"
+      TemplateName:
+        Ref: EnvironmentConfigurationTemplate
+      VersionLabel:
+        Ref: EnvironmentApplicationVersion

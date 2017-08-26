@@ -1,0 +1,20 @@
+<html>
+<head>
+<title>Maven Respository</title>
+</head>
+<body>
+<h2>maven-s3-repo</h2>
+ArtifactId: ${project.artifactId}<br/>
+Version: ${project.version}<br/>
+<ul>
+<li>follows Maven 2+ repository structure (from the base path <code>/repo</code>)</li>
+<li>supports submission of maven artifacts via HTTP PUT or HTTP POST</li>
+<li>authenticated by Basic Authentication</li>
+<li>tested with <i>maven-dependency-plugin</i> (download) and with <i>maven-deploy-plugin</i> (upload)</li>
+</ul> 
+<h3>Authentication</h3>
+<p><code>/configuration.properties</code> on the classpath contains the hashed user keys.
+ Run <code>AuthenticationFilter.main</code> in your IDE to generate your key hash and add
+  to <code>hmacs</code> property in <code>/configuration.properties</code>.</p>
+</body>
+</html>
