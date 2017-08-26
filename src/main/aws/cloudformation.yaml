@@ -13,8 +13,8 @@
 ##
 ##   ./deploy.sh test
 ##
-## will deploy the amsa-maven-test environment to the 
-## amsa-maven Beanstalk application.
+## will deploy the maven-repo-test environment to the 
+## maven-repo Beanstalk application.
 ##
 
 AWSTemplateFormatVersion: '2010-09-09'
@@ -134,8 +134,6 @@ Resources:
       GroupName: !Sub "${applicationName}-security-group-${mode}"
       GroupDescription: "Security group to allow SMTP port for AMSA integration testing and for Burum (Inmarsat.com)"
       SecurityGroupIngress:
-        ## Java team Portal access in AWS for admin
-        - {CidrIp: "52.64.232.41/32", IpProtocol: "tcp", FromPort: "22", ToPort: "22"}
         ## https access
         - {CidrIp: "0.0.0.0/0", IpProtocol: "tcp", FromPort: "443", ToPort: "443"}
   
@@ -178,7 +176,7 @@ Resources:
         OptionName: SecurityGroups
         Value: !Ref ApplicationSecurityGroup
       
-      ## allow ssh access for amsa
+      ## allow ssh access 
       - Namespace: aws:autoscaling:launchconfiguration
         OptionName: EC2KeyName
         Value: amsa
