@@ -67,6 +67,7 @@
                             <filtering>true</filtering>
                             <includes>
                               <include>index.html</include>
+                              <include>.ebextensions/https-instance.config</include>
                             </includes>
                         </resource>
                     </webResources>
