@@ -132,7 +132,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupName: !Sub "${applicationName}-security-group-${mode}"
-      GroupDescription: "Security group to allow SMTP port for AMSA integration testing and for Burum (Inmarsat.com)"
+      GroupDescription: "Security group to allow HTTPS access"
       SecurityGroupIngress:
         ## https access
         - {CidrIp: "0.0.0.0/0", IpProtocol: "tcp", FromPort: "443", ToPort: "443"}
