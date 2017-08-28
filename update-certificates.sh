@@ -55,11 +55,6 @@ rm server.csr
 echo created the following files:
 ls ca* server*
 
-SERVER_CERTS=../src/main/webapp/.ebextensions/certificates/$MODE/
-mkdir -p $SERVER_CERTS
-cp ca.crt $SERVER_CERTS
-cp server.pem $SERVER_CERTS
-
 echo $CA_PASSWORD > ca-password.txt
 
 # make zip file with all keys
