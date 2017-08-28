@@ -56,6 +56,10 @@ Parameters:
   notificationEmail:
     Default: me@thing.com
     Type: String
+    
+  bucketKeys:
+    Default: maven-repo-keys-dev
+    Type: String
 
 Resources:
 
@@ -133,8 +137,8 @@ Resources:
               - s3:GetObjectVersion
               - s3:GetObject
               Resource: 
-              - !Sub "arn:aws:s3:::${applicationName}-setup-${mode}/*"
-              - !Sub "arn:aws:s3:::${applicationName}-setup-${mode}"
+              - !Sub "arn:aws:s3:::${bucketKeys}/*"
+              - !Sub "arn:aws:s3:::${bucketKeys}"
 
   ApplicationSecurityGroup:
     Type: AWS::EC2::SecurityGroup

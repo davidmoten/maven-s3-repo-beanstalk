@@ -117,6 +117,7 @@
 								<mavenRepoBucket>${maven.repo.bucket.prefix}-${mode}</mavenRepoBucket>
 								<sshKey>${ssh.key}</sshKey>
 								<notificationEmail>${email}</notificationEmail>
+								<bucketKeys>${bucketKeysPrefix}-${mode}</bucketKeys>
 							</parameters>
 							<template>src/main/aws/cloudformation.yaml</template>
 							<intervalSeconds>2</intervalSeconds>
