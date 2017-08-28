@@ -53,6 +53,10 @@ Parameters:
     Default: moten
     Type: String
 
+  notificationEmail:
+    Default: me@thing.com
+    Type: String
+
 Resources:
 
   ## incoming smtp messages are put in this bucket
@@ -198,7 +202,7 @@ Resources:
       ## Email notifications
       - Namespace: aws:elasticbeanstalk:sns:topics
         OptionName: Notification Endpoint
-        Value: david.moten@amsa.gov.au
+        Value: !Sub "${notificationEmail}"
         
       - Namespace: aws:elasticbeanstalk:sns:topics
         OptionName: Notification Protocol
