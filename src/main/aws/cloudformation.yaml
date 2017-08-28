@@ -49,6 +49,10 @@ Parameters:
     Default: maven-repo-dev
     Type: String
 
+  sshKey:
+    Default: moten
+    Type: String
+
 Resources:
 
   ## incoming smtp messages are put in this bucket
@@ -179,7 +183,7 @@ Resources:
       ## allow ssh access 
       - Namespace: aws:autoscaling:launchconfiguration
         OptionName: EC2KeyName
-        Value: amsa
+        Value: !Sub "${sshKey}" 
       
       ## JVM options for tomcat
       - Namespace: aws:elasticbeanstalk:container:tomcat:jvmoptions
