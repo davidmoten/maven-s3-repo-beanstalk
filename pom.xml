@@ -108,6 +108,7 @@
                             <parameters>
                                 <mode>${mode}</mode>
                                 <version>${project.version}</version>
+                                <artifactBucket>${artifact.bucket}-${mode}</artifactBucket>
                                 <mavenRepoBucket>${maven.repo.bucket.prefix}-${mode}</mavenRepoBucket>
                             </parameters>
                             <template>src/main/aws/cloudformation.yaml</template>
