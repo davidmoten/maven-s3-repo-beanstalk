@@ -20,7 +20,6 @@
 		<maven.repo.bucket.prefix>maven-repo</maven.repo.bucket.prefix>
 		<email>me@thing.com</email>
 		<bucketPrefixKeys>maven-repo-keys</bucketPrefixKeys>
-
 		<jetty.plugin.version>8.1.12.v20130726</jetty.plugin.version>
 		<jetty.stop.port>9998</jetty.stop.port>
 	</properties>
@@ -96,8 +95,8 @@
 							<file>${project.build.directory}/${project.artifactId}.war</file>
 							<objectName>${project.artifactId}-${project.version}.war</objectName>
 							<!-- optional proxy config -->
-							<httpsProxyHost>${proxy.host}</httpsProxyHost>
-							<httpsProxyPort>8080</httpsProxyPort>
+							<httpsProxyHost>${https.proxyHost}</httpsProxyHost>
+							<httpsProxyPort>${https.proxyPort}</httpsProxyPort>
 						</configuration>
 					</execution>
 					<!-- mvn aws:deployCf@cf -->
@@ -122,8 +121,8 @@
 							<template>src/main/aws/cloudformation.yaml</template>
 							<intervalSeconds>2</intervalSeconds>
 							<!-- optional proxy config -->
-							<httpsProxyHost>${proxy.host}</httpsProxyHost>
-							<httpsProxyPort>8080</httpsProxyPort>
+							<httpsProxyHost>${https.proxyHost}</httpsProxyHost>
+							<httpsProxyPort>${https.proxyPort}</httpsProxyPort>
 						</configuration>
 					</execution>
 				</executions>
