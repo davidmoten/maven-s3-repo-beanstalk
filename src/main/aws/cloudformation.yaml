@@ -33,8 +33,8 @@ Parameters:
     Description: the Maven version of the artifact to be deployed
     Type: String
     
-  artifactName:
-    Default: maven-s3-repo
+  artifactObjectName:
+    Default: maven-s3-repo-beanstalk
     Type: String
     
   applicationName:
@@ -177,7 +177,7 @@ Resources:
       Description: !Sub "${applicationName}-${mode} application version"
       SourceBundle:
         S3Bucket: !Sub "${artifactBucket}"
-        S3Key: !Sub "${artifactName}-${version}.war"
+        S3Key: !Sub "${artifactObjectName}"
   
   EnvironmentConfigurationTemplate:
     Type: AWS::ElasticBeanstalk::ConfigurationTemplate
