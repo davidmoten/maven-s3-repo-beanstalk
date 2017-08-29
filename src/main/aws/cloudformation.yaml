@@ -66,16 +66,10 @@ Resources:
   ## incoming smtp messages are put in this bucket
   ## and the s3 id put on the incoming queue
   
-  KeysBucket:
-    Type: AWS::S3::Bucket
-    DeletionPolicy: Retain
-    Properties:
-      BucketName: !Sub "${bucketKeys}"
-  
-  KeysBucketPolicy:
+    KeysBucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
-      Bucket: !Ref KeysBucket
+      Bucket: !Sub "${bucketKeys}"
       PolicyDocument:
             Version: '2012-10-17'
             Statement:
