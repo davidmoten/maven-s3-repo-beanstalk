@@ -63,10 +63,7 @@ Parameters:
 
 Resources:
 
-  ## incoming smtp messages are put in this bucket
-  ## and the s3 id put on the incoming queue
-  
-    KeysBucketPolicy:
+  KeysBucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
       Bucket: !Sub "${bucketKeys}"
