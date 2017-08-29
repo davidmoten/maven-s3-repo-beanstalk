@@ -75,7 +75,7 @@ Resources:
             Statement:
             - Effect: Allow
               Principal: 
-              - AWS: !Join [":",["arn:aws:iam::",!Ref "AWS::AccountId",!Sub "role/${applicationName}-instance-role-${mode}"]]
+              - AWS: !Sub "arn:aws:iam:::role/${applicationName}-instance-role-${mode}"
               Action: 
               - s3:ListBucketVersions
               - s3:ListBucket
