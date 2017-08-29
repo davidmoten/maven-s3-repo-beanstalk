@@ -19,7 +19,7 @@
         <artifact.bucket>elastic-beanstalk-artifacts</artifact.bucket>
         <maven.repo.bucket.prefix>maven-repo</maven.repo.bucket.prefix>
         <email>me@thing.com</email>
-        <bucketPrefixKeys>maven-repo-keys</bucketPrefixKeys>
+        <bucketKeysPrefix>maven-repo-keys</bucketKeysPrefix>
         <jetty.plugin.version>8.1.12.v20130726</jetty.plugin.version>
         <jetty.stop.port>9998</jetty.stop.port>
     </properties>
