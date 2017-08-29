@@ -84,7 +84,7 @@ Resources:
               Resource: 
               - !Sub "arn:aws:s3:::${bucketKeys}/*"
               - !Sub "arn:aws:s3:::${bucketKeys}"
-   DependsOn: ApplicationInstanceRole
+    DependsOn: ApplicationInstanceRole
       
   
   ApplicationServiceRole:
