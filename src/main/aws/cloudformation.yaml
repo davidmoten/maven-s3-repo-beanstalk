@@ -67,7 +67,7 @@ Resources:
   ## and the s3 id put on the incoming queue
   
   KeysBucket:
-    Type: AWS:S3::Bucket
+    Type: AWS::S3::Bucket
     DeletionPolicy: Retain
     Properties:
       BucketName: !Sub "${bucketKeys}"
