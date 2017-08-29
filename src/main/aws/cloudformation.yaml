@@ -66,6 +66,27 @@ Resources:
   ## incoming smtp messages are put in this bucket
   ## and the s3 id put on the incoming queue
   
+  KeysBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Sub "${bucketKeys}"
+      PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+            - Effect: Allow
+              Principal: 
+              - AWS: !Join [":",["arn:aws:iam::",!Ref "AWS::AccountId",!Sub "role/${applicationName}-instance-role-${mode}"]]
+              Action: 
+              - s3:ListBucketVersions
+              - s3:ListBucket
+              - s3:GetObjectVersion
+              - s3:GetObject
+              Resource: 
+              - !Sub "arn:aws:s3:::${bucketKeys}/*"
+              - !Sub "arn:aws:s3:::${bucketKeys}"
+   DependsOn: ApplicationInstanceRole
+      
+  
   ApplicationServiceRole:
     Type: AWS::IAM::Role
     Properties:
