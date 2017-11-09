@@ -117,7 +117,6 @@
                                 <mode>${mode}</mode>
                                 <artifactBucket>${artifact.bucket}-${mode}</artifactBucket>
                                 <artifactObjectName>${artifact.object.name}</artifactObjectName>
-                                <version>${project.version}</version>
                                 <mavenRepoBucket>${maven.repo.bucket.prefix}-${mode}</mavenRepoBucket>
                                 <sshKey>${ssh.key}</sshKey>
                                 <notificationEmail>${email}</notificationEmail>
