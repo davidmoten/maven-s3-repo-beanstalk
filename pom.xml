@@ -18,6 +18,10 @@
         <ssh.key>moten</ssh.key>
         <artifact.bucket>elastic-beanstalk-artifacts</artifact.bucket>
         <maven.repo.bucket.prefix>maven-repo</maven.repo.bucket.prefix>
+        <timestamp>${maven.build.timestamp}</timestamp>
+        <timestampSuffix>-${timestamp}</timestampSuffix>
+        <!-- this property used in src/main/resources/configuration.properties -->
+        <artifact.object.name>${project.artifactId}-${project.version}${timestampSuffix}.war</artifact.object.name>
         <email>me@thing.com</email>
         <bucketKeysPrefix>maven-repo-keys</bucketKeysPrefix>
         <jetty.plugin.version>8.1.12.v20130726</jetty.plugin.version>
@@ -80,7 +84,7 @@
             <plugin>
                 <groupId>com.github.davidmoten</groupId>
                 <artifactId>aws-maven-plugin</artifactId>
-                <version>0.2.11</version>
+                <version>0.2.14</version>
                 <executions>
                     <execution>
                         <id>file</id>
@@ -93,7 +97,7 @@
                             <bucketName>${artifact.bucket}-${mode}</bucketName>
                             <create>true</create>
                             <file>${project.build.directory}/${project.artifactId}.war</file>
-                            <objectName>${project.artifactId}-${project.version}.war</objectName>
+                            <objectName>${artifact.object.name}</objectName>
                             <!-- optional proxy config -->
                             <httpsProxyHost>${https.proxyHost}</httpsProxyHost>
                             <httpsProxyPort>${https.proxyPort}</httpsProxyPort>
@@ -112,7 +116,7 @@
                             <parameters>
                                 <mode>${mode}</mode>
                                 <artifactBucket>${artifact.bucket}-${mode}</artifactBucket>
-                                <artifactObjectName>${project.artifactId}-${project.version}.war</artifactObjectName>
+                                <artifactObjectName>${artifact.object.name}</artifactObjectName>
                                 <version>${project.version}</version>
                                 <mavenRepoBucket>${maven.repo.bucket.prefix}-${mode}</mavenRepoBucket>
                                 <sshKey>${ssh.key}</sshKey>
@@ -160,35 +164,5 @@
                 </configuration>
             </plugin>
         </plugins>
-        <pluginManagement>
-            <plugins>
-                <!--This plugin's configuration is used to store Eclipse 
-                    m2e settings only. It has no influence on the Maven build itself. -->
-                <plugin>
-                    <groupId>org.eclipse.m2e</groupId>
-                    <artifactId>lifecycle-mapping</artifactId>
-                    <version>1.0.0</version>
-                    <configuration>
-                        <lifecycleMappingMetadata>
-                            <pluginExecutions>
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>com.github.davidmoten</groupId>
-                                        <artifactId>decrypt-maven-plugin</artifactId>
-                                        <versionRange>[0.1.2,)</versionRange>
-                                        <goals>
-                                            <goal>decrypt</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <ignore />
-                                    </action>
-                                </pluginExecution>
-                            </pluginExecutions>
-                        </lifecycleMappingMetadata>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
     </build>
 </project>

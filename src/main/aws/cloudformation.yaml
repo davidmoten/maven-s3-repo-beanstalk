@@ -28,13 +28,8 @@ Parameters:
     MinLength: 1
     MaxLength: 255
     
-  version:
-    Default: 6.0-SNAPSHOT
-    Description: the Maven version of the artifact to be deployed
-    Type: String
-    
   artifactObjectName:
-    Default: maven-s3-repo-beanstalk
+    Default: maven-s3-repo-beanstalk.war
     Type: String
     
   applicationName:
