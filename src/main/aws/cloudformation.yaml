@@ -4,6 +4,8 @@
 ## 
 ## Prerequisites:
 ##   - The Beanstalk Application should already be created in the AWS Console
+##   - The S3 bucket maven-repo-keys-${mode} should have the files 
+##        server-private-key.pem, server.pem
 ## 
 ## To run:
 ##
@@ -63,19 +65,15 @@ Resources:
     Properties:
       Bucket: !Sub "${bucketKeys}"
       PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-            - Effect: Allow
-              Principal: 
-              - AWS: !Sub "arn:aws:iam:::role/${applicationName}-instance-role-${mode}"
-              Action: 
-              - s3:ListBucketVersions
-              - s3:ListBucket
-              - s3:GetObjectVersion
-              - s3:GetObject
-              Resource: 
-              - !Sub "arn:aws:s3:::${bucketKeys}/*"
-              - !Sub "arn:aws:s3:::${bucketKeys}"
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal: 
+          - AWS: !Sub "${ApplicationInstanceRole.Arn}"
+          Action: 
+          - s3:GetObject
+          Resource: 
+          - !Sub "arn:aws:s3:::${bucketKeys}/*"
     DependsOn: ApplicationInstanceRole
   
   ApplicationServiceRole:

@@ -23,6 +23,7 @@
         <!-- this property used in src/main/resources/configuration.properties -->
         <artifact.object.name>${project.artifactId}-${project.version}${timestampSuffix}.war</artifact.object.name>
         <email>me@thing.com</email>
+        <!--  used in https-instance.config -->
         <bucketKeysPrefix>maven-repo-keys</bucketKeysPrefix>
         <jetty.plugin.version>8.1.12.v20130726</jetty.plugin.version>
         <jetty.stop.port>9998</jetty.stop.port>
