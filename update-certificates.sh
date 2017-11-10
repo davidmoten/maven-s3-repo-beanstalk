@@ -62,11 +62,7 @@ rm -f maven-repo-keys-*.zip
 zip maven-repo-keys-$MODE.zip ca.crt ca.key server.pem server-private-key.pem ca-password.txt 
 rm ca-password.txt
 
-# these files deployed in project source (they are encrypted thus are safe)
-rm ca.crt
-rm server.pem
-
-cp ca.* server-private-key.* maven-repo-keys-*.zip /tmp
+cp ca.* server.pem server-private-key.* maven-repo-keys-*.zip /tmp
 
 echo ---------------------------------------
 echo ---------- IMPORTANT! -----------------

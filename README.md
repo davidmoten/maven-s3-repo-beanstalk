@@ -1,9 +1,10 @@
 # maven-s3-repo-beanstalk
-Private maven repository backed by AWS S3 storage running on AWS Beanstalk
+Private maven repository backed by AWS S3 storage running on AWS Beanstalk. Includes setting of server certificates.
 
 ## How to deploy
 You need to 
 * set credentials (BasicAuth username and password for the service)
+* generate certificates (optional)
 * install certificates
 * run deploy.sh
 
