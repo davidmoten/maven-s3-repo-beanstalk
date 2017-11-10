@@ -60,22 +60,6 @@ Parameters:
 
 Resources:
 
-  KeysBucketPolicy:
-    Type: AWS::S3::BucketPolicy
-    Properties:
-      Bucket: !Sub "${bucketKeys}"
-      PolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-        - Effect: Allow
-          Principal: 
-          - AWS: !Sub "${ApplicationInstanceRole.Arn}"
-          Action: 
-          - s3:GetObject
-          Resource: 
-          - !Sub "arn:aws:s3:::${bucketKeys}/*"
-    DependsOn: ApplicationInstanceRole
-  
   ApplicationServiceRole:
     Type: AWS::IAM::Role
     Properties:
